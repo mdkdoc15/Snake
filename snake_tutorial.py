@@ -11,13 +11,14 @@ class Snake(object):
         self.positions = [((SCREEN_WIDTH/2),( SCREEN_HEIGHT/2))]
         # Randomizes which direction it will travel when it starts
         self.direction = random.choice([UP, DOWN, LEFT, RIGHT])
+        self.score = 0
         self.color = (17,24,47)
 
     def get_head_pos(self):
         return self.positions[0]
 
     def turn(self, point):
-        if self.length > 1 and (point[0]  * -1, point[1] *-1) == self.direction: # Prevents the snake from moving backwards if there is more than one segment on the snake
+        if self.length > 1 and (point[0]  * -1, point[1] * -1) == self.direction: # Prevents the snake from moving backwards if there is more than one segment on the snake
             return
         else:
             self.direction = point
@@ -41,26 +42,28 @@ class Snake(object):
         self.length = 1
         self.positions = [((SCREEN_WIDTH/2),( SCREEN_HEIGHT/2))]
         self.direction = random.choice([UP, DOWN, LEFT, RIGHT])
+        self.score = 0
 
 
     #-------------
     # Add images for the body
-    # Why is there 2 draw rectangel functions
     #-------------
     def draw(self, surface):
         for p in self.positions:
             # Create the rectange of the body of the snake
             r = pygame.Rect((p[0],p[1]), (GRIDSIZE, GRIDSIZE))
             pygame.draw.rect(surface, self.color, r)
-            pygame.draw.rect(surface, (93,216,228), r , 1)
+            # Creates a boarder around each section of the snake
+            pygame.draw.rect(surface, (93,216,228), r , 1) 
 
 
     def handle_keys(self):
+        # Will return true if the game is over
         for event in pygame.event.get():
-            if event == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event == pygame.KEYDOWN:
+            if event.type == pygame.QUIT:
+                return True
+                
+            elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP:
                     self.turn(UP)
                 elif event.key == pygame.K_DOWN:
@@ -69,6 +72,8 @@ class Snake(object):
                     self.turn(RIGHT)
                 elif event.key == pygame.K_LEFT:
                     self.turn(LEFT)
+
+        return False
 class Food(object):
 
     #--------
@@ -126,7 +131,8 @@ def drawGrid(surface):
 def main():
     # Start Pygame
     pygame.init()
-
+    pygame.font.init()
+    myfont = pygame.font.SysFont('Arial', 12)
     # Keep track of the time within the game
     clock = pygame.time.Clock()
 
@@ -144,45 +150,36 @@ def main():
     food = Food()
 
     # Used to keep track of how many apples have been eaten
-    score = 0
     game_over = False
 
     while not game_over:
         clock.tick(10) # Creates a 10 FPS loop
 
         #Handle game events
-        #snake.handle_keys()
+        game_over = snake.handle_keys()
         drawGrid(surface)
                 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                game_over = True
-                pygame.quit()
-                #sys.exit()
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    snake.turn(UP)
-                elif event.key == pygame.K_DOWN:
-                    snake.turn(DOWN)
-                elif event.key == pygame.K_RIGHT:
-                    snake.turn(RIGHT)
-                elif event.key == pygame.K_LEFT:
-                    snake.turn(LEFT)
+        
 
         snake.move()
         if snake.get_head_pos() == food.postion:
             snake.length += 1
-            score +=1
+            snake.score +=1
             food.randomize_pos()
 
         snake.draw(surface)
         food.draw(surface)
 
-        #text = myFont.render("Score {0}".format(score), 1 , (0,0,0))
+        
+        text = myfont.render("Score {0}".format(snake.score), 1 , (0,0,0))
         #Update the screen
         screen.blit(surface, (0,0))
-        #screen.blit(text, (5,10))
+        screen.blit(text, (5,5))
         pygame.display.update()
+    
+    # End the game when we ahve exited the loop
+    pygame.quit()
+    sys.exit()
 
 
 main()
