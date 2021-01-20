@@ -87,10 +87,6 @@ class Food(object):
     def randomize_pos(self):
         self.postion = (random.randint(0, GRID_WIDTH-1) * GRIDSIZE, random.randint(0, GRID_WIDTH-1) * GRIDSIZE)
 
-
-    #----------------
-    # WHy 2 draw methods
-    # -----------------
     def draw(self, surface):
         r = pygame.Rect(self.postion, (GRIDSIZE, GRIDSIZE))
         pygame.draw.rect(surface, self.color, r)
