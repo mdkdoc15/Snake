@@ -10,6 +10,14 @@ GRIDSIZE = 20
 GRID_WIDTH = int(SCREEN_WIDTH/GRIDSIZE)
 GRID_HEIGHT = int(SCREEN_HEIGHT/GRIDSIZE)
 
+
+#Initilize all images
+ICON = pygame.image.load('Images/snake.png')
+BODY_IMG = pygame.image.load('Images/circle.png')
+BODY_IMG = pygame.transform.scale(BODY_IMG, (GRIDSIZE, GRIDSIZE))
+FOOD_IMG = pygame.image.load('Images/apple.png')
+FOOD_IMG = pygame.transform.scale(FOOD_IMG, (GRIDSIZE,GRIDSIZE))
+
 # Movement of the snake [X , Y]
 UP = [0,-1]
 DOWN = [0,1]
@@ -53,8 +61,7 @@ class Snake(object):
         
     def draw(self, surface):
         for body in self.positions:
-            r = pygame.Rect(body[0], body[1], GRIDSIZE, GRIDSIZE)
-            pygame.draw.rect(surface, self.color, r)
+            surface.blit(BODY_IMG, body)
 
     def reset(self):
         self.positions = [(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)]
@@ -73,10 +80,9 @@ class Food(object):
     def get_postion(self):
         return self.position
     def randomize_position(self):
-        self.position = (random.randint(0,GRID_WIDTH) * GRIDSIZE, random.randint(0,GRID_HEIGHT) * GRIDSIZE)
+        self.position = (random.randint(0,GRID_WIDTH-1) * GRIDSIZE, random.randint(0,GRID_HEIGHT-1) * GRIDSIZE)
     def draw(self, surface):
-        r = pygame.Rect(self.position[0], self.position[1], GRIDSIZE, GRIDSIZE)
-        pygame.draw.rect(surface, self.color, r)
+        surface.blit(FOOD_IMG, self.position)
 
 def drawGrid(surface):
     for x in range(GRID_WIDTH):
@@ -90,12 +96,9 @@ def drawGrid(surface):
 def main():
     pygame.init()
     clock = pygame.time.Clock()
-    #Initilize all images
-    icon = pygame.image.load('Images/snake.png')
-    body_icon = pygame.image.load('Images/circle.png')
-
+    
     #Set Icon
-    pygame.display.set_icon(icon)
+    pygame.display.set_icon(ICON)
 
     #Set Titile
     pygame.display.set_caption('Snake')
