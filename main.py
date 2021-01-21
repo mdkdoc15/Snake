@@ -18,6 +18,7 @@ RIGHT = [1,0]
 
 BLACK = (0,0,0)
 WHITE = (255,255,255)
+YELLOW =(255,255,153)
 PURPLE = (88,73,130)
 LIGHT_GREEN = (180,255,171)
 DARK_GREEN = (132,255,171)
@@ -66,11 +67,16 @@ class Snake(object):
 
 class Food(object):
     def __init__(self):
-        pass
+        self.position = [0,0]
+        self.color = YELLOW
+        self.randomize_position()
     def get_postion(self):
-        pass
+        return self.position
     def randomize_position(self):
-        pass
+        self.position = (random.randint(0,GRID_WIDTH) * GRIDSIZE, random.randint(0,GRID_HEIGHT) * GRIDSIZE)
+    def draw(self, surface):
+        r = pygame.Rect(self.position[0], self.position[1], GRIDSIZE, GRIDSIZE)
+        pygame.draw.rect(surface, self.color, r)
 
 def drawGrid(surface):
     for x in range(GRID_WIDTH):
@@ -102,14 +108,18 @@ def main():
     drawGrid(surface)
 
     snake = Snake()
+    food = Food()
 
     game_over = False
     while not game_over:
+        #Control the game time
         clock.tick(10)
+        
+        # Add items to the screen
         screen.fill(WHITE) 
         drawGrid(surface)
-        snake.draw(surface)
-        snake.move()
+
+        #Check for events
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
@@ -125,8 +135,22 @@ def main():
                 elif event.key == pygame.K_RIGHT:
                     snake.turn(RIGHT)
 
+        # Update the snake
+        snake.move()
+        snake.draw(surface)
+        
+        # Add the food to the screen
+        food.draw(surface)
+
+        if(snake.get_head_pos() == food.get_postion()):
+            snake.score += 1
+            snake.size += 1
+            print("Score :", snake.score)
+            food.randomize_position()
 
 
+        
+        # Update the screen
         screen.blit(surface, (0,0))
         pygame.display.update()
 
