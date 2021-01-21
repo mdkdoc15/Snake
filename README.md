@@ -6,8 +6,8 @@ Game is currently working.
 
 Future updates to add:
 
-- [ ] Custom images for snake body
-- [ ] Custom images for fruit
+- [x] Custom images for snake body
+- [x] Custom images for fruit
 - [ ] End game with a game over screen
 - [x] Way to display the score in game
 - [ ] Make the screen resizeable
