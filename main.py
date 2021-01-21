@@ -1,6 +1,7 @@
 import pygame 
 import random
 
+
 # Total Size
 SCREEN_WIDTH = 480
 SCREEN_HEIGHT = 480
@@ -11,7 +12,7 @@ GRID_HEIGHT = int(SCREEN_HEIGHT/GRIDSIZE)
 
 # Movement of the snake [X , Y]
 UP = [0,-1]
-DOWN = [1,0]
+DOWN = [0,1]
 LEFT = [-1,0]
 RIGHT = [1,0]
 
@@ -25,7 +26,7 @@ DARK_GREEN = (132,255,171)
 class Snake(object):
     def __init__(self):
         self.positions = [(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)]
-        self.direction = random.choice([UP,DOWN,LEFT, RIGHT])
+        self.direction = random.choice([UP,DOWN,LEFT,RIGHT])
         self.size = 1
         self.score = 0
         self.color = PURPLE
@@ -34,8 +35,6 @@ class Snake(object):
         return self.positions[0]
     
     def move(self):
-        print(self.positions)
-        print("________________")
         current = self.get_head_pos()
         new = (current[0] + self.direction[0] * GRIDSIZE, current[1] + self.direction[1] * GRIDSIZE)
         if new in self.positions:
@@ -44,20 +43,25 @@ class Snake(object):
             self.positions.insert(0, new)
             if len(self.positions) > self.size:
                 self.positions.pop()
+        if(self.positions[0][0] > SCREEN_WIDTH or self.positions[0][0] < 0 or self.positions[0][1] > SCREEN_HEIGHT or self.positions[0][1] < 0):
+            self.reset()
 
-    def turn(self, direction):
-        pass
+    def turn(self, new_direction):
+        if not (self.size > 1 and self.direction[0] * - 1 == new_direction[0] and self.direction[1]*-1 == new_direction[1]):
+            self.direction = new_direction
+        
     def draw(self, surface):
         for body in self.positions:
             r = pygame.Rect(body[0], body[1], GRIDSIZE, GRIDSIZE)
             pygame.draw.rect(surface, self.color, r)
 
     def reset(self):
-        self.positions = [(GRID_WIDTH/2, GRID_HEIGHT/2)]
+        self.positions = [(SCREEN_WIDTH/2, SCREEN_HEIGHT/2)]
         self.size = 1
         self.score = 0
-    def movement(self):
-        pass
+        self.direction = random.choice([UP,DOWN,LEFT,RIGHT])
+
+    
 
 
 class Food(object):
@@ -103,12 +107,26 @@ def main():
     while not game_over:
         clock.tick(10)
         screen.fill(WHITE) 
+        drawGrid(surface)
         snake.draw(surface)
         snake.move()
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 game_over = True
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    snake.turn(UP)
+                elif event.key == pygame.K_DOWN:
+                    snake.turn(DOWN)
+                elif event.key == pygame.K_LEFT:
+                    snake.turn(LEFT)
+                elif event.key == pygame.K_RIGHT:
+                    snake.turn(RIGHT)
+
+
+
         screen.blit(surface, (0,0))
         pygame.display.update()
 
