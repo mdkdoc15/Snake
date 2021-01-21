@@ -11,6 +11,6 @@ Future updates to add:
 - [ ] End game with a game over screen
 - [x] Way to display the score in game
 - [ ] Make the screen resizeable
-- [ ] End game when snake runs into wall
+- [x] End game when snake runs into wall
 - [ ] Make a starting screen or menu
 - [ ] Impliment a leader board
